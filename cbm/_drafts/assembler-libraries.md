@@ -102,7 +102,13 @@ To overcome this limitation, we have to prepend function and macro name with ```
 
 What is good, is that we actually have two kind of objects: public (prepended with ```@```) and private objects (hidden inside namespace) - we can then define public API of our library and keep the rest as freely modifiable private elements.
 
+## How to use library (in another library)
+
+tbd
+
 ## Bring some automation with Travis CI
+
+tbd
 
 [KickAssembler]: http://www.theweb.dk/KickAssembler/Main.html
 [Relaunch64]: http://www.popelganda.de/relaunch64.html
