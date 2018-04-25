@@ -18,7 +18,8 @@ Just to unlock my brain at this moment, I decided that:
 
 Challenge accepted.
 
-## What is a library?
+What is a library?
+------------------
 Library is just a piece of code that anybody can reuse in other projects just to boost productivity. There are few assumptions that everybody should consider: such code must offer stable API, must be properly versioned (such as I need to use exact version 1.4.0, nothing older but also nothing newer).
 
 What does it mean in practice?
@@ -29,7 +30,67 @@ What does it mean in practice?
 
 Later I will show, how can we at least partially address these issues for KickAssembler-written libs.
 
-## How can we write library in KickAssembler?
+What should we put into library?
+--------------------------------
+In order to create flexible solution I decided that I will always wrap assembly code in macro while in library. This has two major advantages:
+* Macros can be parametrized, which gives us additional flexibility.
+* We have full freedom where to use macro and thus where in memory will resulting code be located.
+
+Let's assume we have following code in our library:
+
+	.macro inc16(destination) {
+	  inc destination
+	  bne !+
+	  inc destination + 1
+	!:
+	}
+
+It increments 16 bit number placed in memory in two memory cells: ```destination``` and ```destination+1``` (little endian). Every time it is used it will be exchanged with 3 instructions weighting 8 bytes in total. Of course we can use such "library call" many times, each time we're adding 8 bytes to total length of our code.
+
+There are two more useful types of items we can declare in our library. 
+
+[KickAssembler] offers functions, that itself does not evaluate into assembly code but can calculate values that can be later used as immediate value in assembly or in macros.
+
+Lets's consider following function:
+
+	.function getTextMemory(screenMem, charSet) {
+	  .return charSet<<1 | screenMem<<4
+	}
+	
+What it does it takes screenMemory slot and charsetSlot and combines it together to get value that can be then stored in ```$D018``` register of VIC-II. This can be used for every 3 text modes of C64. This is how we can use it in code:
+
+	lda #getTextMemory(1, 4)
+	sta MEMORY_CONTROL
+
+Or we can even wrap it into library macro:
+
+	.macro configureTextMemory(screenMem, charSet) {
+	  lda #getTextMemory(screenMem, charSet)
+	  sta MEMORY_CONTROL
+	}
+
+and then use in code like this:
+
+	configureTextMemory(1, 4)
+
+Last useful item is label. Labels can be used to define constants that can be then reused in different part of library, other libraries or programs. It is definitely easier to read ```sta MEMORY_CONTROL``` instead of ```sta $D017```, isn't it?
+
+Here's beginning of declaration for all VIC-II registers:
+
+	/* ------------------------------------
+	 * VIC-II registers.
+	 * ------------------------------------ */
+	.label VIC2                 = $D000 
+	.label SPRITE_0_X           = VIC2 + $00 
+	.label SPRITE_0_Y           = VIC2 + $01 
+	.label SPRITE_1_X           = VIC2 + $02 
+	.label SPRITE_1_Y           = VIC2 + $03 
+	.label SPRITE_2_X           = VIC2 + $04 
+
+
+	
+How can we write libraries in assembly?
+---------------------------------------
 There are three features of [KickAssembler] that are handy here:
 * The ```#import``` directive that includes specified ```asm``` file into source code.
 * The namespace feature that allows to isolate objects of library so that they don't clash with identically named objects of another library.
@@ -69,8 +130,8 @@ Then we have function documentation (quite important for libraries) - this is lo
 
 Then I wrote several tests in form of KickAssembler asserts: why not to write some unit tests if there is such possibility given by assembler?
 
-## Small problems
-
+Small problems
+--------------
 Sadly there are few shortcommings of [KickAssembler] as for now (version 4.x), which make things a little bit more complicated.
 
 Firstly, it is not possible to specify more than one diectory with ```-libdir``` switch. This is quite easy to workaround - either we need to checkout all libraries into single, common directory, or we can keep it separated and than assemble it into 'virtual folder' using symbolic links. 
@@ -102,12 +163,12 @@ To overcome this limitation, we have to prepend function and macro name with ```
 
 What is good, is that we actually have two kind of objects: public (prepended with ```@```) and private objects (hidden inside namespace) - we can then define public API of our library and keep the rest as freely modifiable private elements.
 
-## How to use library (in another library)
-
+How to use library (in another library)
+---------------------------------------
 tbd
 
-## Bring some automation with Travis CI
-
+Bring some automation with Travis CI
+------------------------------------
 tbd
 
 [KickAssembler]: http://www.theweb.dk/KickAssembler/Main.html
