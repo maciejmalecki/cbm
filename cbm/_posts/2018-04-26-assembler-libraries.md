@@ -75,7 +75,7 @@ and then use in code like this:
 
 Last useful item is label. Labels can be used to define constants that can be then reused in different part of library, other libraries or programs. It is definitely easier to read ```sta MEMORY_CONTROL``` instead of ```sta $D017```, isn't it?
 
-Here's beginning of declaration for all VIC-II registers:
+Here's example: a beginning of declaration for all VIC-II registers:
 
 	/* ------------------------------------
 	 * VIC-II registers.
@@ -86,7 +86,6 @@ Here's beginning of declaration for all VIC-II registers:
 	.label SPRITE_1_X           = VIC2 + $02 
 	.label SPRITE_1_Y           = VIC2 + $03 
 	.label SPRITE_2_X           = VIC2 + $04 
-
 
 	
 How can we write libraries in assembly?
@@ -165,11 +164,104 @@ What is good, is that we actually have two kind of objects: public (prepended wi
 
 How to use library (in another library)
 ---------------------------------------
-tbd
+Assuming you have checked out a library into some common library directory of your choice, using it in your code is relatively simple. Look at my directory structure where I have checked out my libraries:
+
+![Content of lib dir]({{ "/cbm/img/travis-ci/library-directory.png" | absolute_url }})
+
+When using KickAssembler from command line you use ```-libdir``` parameter to specify ```c64lib``` directory location (in my case) and you can write your source code like this:
+
+	#import "chipset/vic2.asm"
+	#import "chipset/sprites.asm"
+	#import "chipset/cia.asm"
+	#import "common/mem.asm"
+
+	*=$0801 "Basic Upstart"
+		:BasicUpstart(start)
+
+	*=$0810 "Asm Program"
+	start: {
+		jsr initialize
+	loop:
+		inc c64lib.BORDER_COL
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		jmp loop
+	}
+
+	initialize: {
+		sei
+		cli
+		rts
+	}
+
+You see: because inside ```c64lib``` dir you have ```chipset``` and ```common``` checked out, and inside you have ```vic2.asm```, ```sprites.asm```, ```cia.asm``` and ```mem.asm``` respectively, all works perfectly (KickAssembler will find these files to include them). All you need to do is to launch it in following way:
+
+	java -jar KickAss.jar -libdir c:\c\c64lib test.asm
+	
+If you use IDE such as [Relaunch64], you must customize Compile & Run Scripts in following way:
+
+![How to customize Relaunch64]({{ "/cbm/img/travis-ci/relaunch64.png" | absolute_url }})
+
 
 Bring some automation with Travis CI
 ------------------------------------
-tbd
+Interesting part starts actually here. [TravisCI] is a CI environment that is very well integrated with [GitHub]. It is also free for public repositories, so as long as we're doing Open Source, we don't have to invest - cool. Once you integrate Travis with your GIT repository, it will start watching for pushes (on any branch, pull request, tag, etc). When new push is detected, it scans your repository for ```.travis.yml``` configuration file and according to what's inside provides your own temporary little linux machine on which you can actually do anything. Most likely you do a build of your software, you can even launch it and test it if you wish.
+
+Travis comes with plenty of predefined environments so that you can easily build Java/Maven projects, Ruby, Python, C++ and so on. Surprisingly, there is no environment for KickAssembler available (ha ha ha). Then I actually found, that it is not so easy to provide one, because KickAssembler is a Java application and JVM is available on any Travis environment out of the box! All we need to do is to download KickAssembler at the beginning of our builds and then just use it to build any ```asm``` file you wish.
+
+I have encapsulated this functionality in separate GIT hub repo:
+
+<https://github.com/c64lib/travis-ci>
+
+There is actually some documentation provided how to use (see README). What is important, to use this functionality you must provide ```.travis.yml``` file with similar content:
+
+```yml
+language: asm
+sudo: false
+before_install:
+  - source <(curl -SLs https://raw.githubusercontent.com/c64lib/travis-ci/master/install.sh)
+script:
+  - cpm common https://github.com/c64lib/common/archive/develop.tar.gz
+  - cpm chipset https://github.com/c64lib/chipset/archive/develop.tar.gz
+  - ka -libdir cpm_modules test.asm
+notifications:
+  email:
+     on_success: change
+     on_error: change
+```
+
+First important line is this one:
+```bash
+source <(curl -SLs https://raw.githubusercontent.com/c64lib/travis-ci/master/install.sh)
+```
+It downloads ```install.sh``` script from repo and sources it (it means it will be immediately executed inside Travis CI environment). What this script does, it download KickAssembler binaries and provides your scripting environment with two further commands: ```cpm`` and ```ka```.
+
+The ```ka``` command is just a wrapper for KickAssembler (who wants to type ```java -jar KickAss.jar ...?) - you now just type ```ka``` and pass all valid KickAssembler parameters to it.
+
+The ```cpm``` command is a very simple tool for managing dependencies. It actually very limited - what it does now, it download specified library from GitHub, unzip it and places in hidden ```.cpm_modules``` directory (JavaScript and NodeJS people already know what is going on;-). Actually it is so limited (I wrote it and tested in 15 minutes), that you must provide it with library name manually, see:
+
+```bash
+  - cpm chipset https://github.com/c64lib/chipset/archive/develop.tar.gz
+```
+(this one downloads content of ```develop``` branch of ```chipset``` library and unzips it under ```.cpm_modules\chipset```).
+
+Because now we are always launching kick assembler in following way:
+```bash
+  - ka -libdir cpm_modules test.asm
+```
+you can reference a library with following import:
+
+	#import "chipset/vic2.asm"
+	
+Still, because this facility is very limited, it is useful only for remote builds (CI) on TravisCI. However, I plan to enhance it to be a CLI interface for development environment. But for this you have to wait a while.
+
+You can refer test library on GitHub:
+
+<https://github.com/c64lib/test>
 
 [KickAssembler]: http://www.theweb.dk/KickAssembler/Main.html
 [Relaunch64]: http://www.popelganda.de/relaunch64.html
