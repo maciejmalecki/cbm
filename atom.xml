@@ -4,12 +4,22 @@
  <title>()=>{} | Void's blog</title>
  <link href="https://maciejmalecki.github.io/atom.xml" rel="self"/>
  <id>https://maciejmalecki.github.io</id>
- <updated>2019-11-17T21:48:46+00:00</updated>
+ <updated>2019-12-04T21:07:20+00:00</updated>
  <author>
    <name></name>
    <uri></uri>
    <email></email>
  </author>
+
+ 
+
+ <entry>
+   <title>Documentation site for the c64lib finally available</title>
+   <link href="https://maciejmalecki.github.io/docu-for-c64lib"/>
+   <id>https://maciejmalecki.github.io/docu-for-c64lib</id>
+   <updated>2019-12-04T00:00:00+00:00</updated>
+   <content type="html">&lt;p&gt;I have finally managed to set up documentation web site for &lt;a href=&quot;https://github.com/c64lib&quot;&gt;c64lib&lt;/a&gt;. It is available under following link: &lt;a href=&quot;https://c64lib.github.io/docu/&quot;&gt;https://c64lib.github.io/docu/&lt;/a&gt;&lt;/p&gt; &lt;p&gt;There is a dedicated &lt;a href=&quot;https://c64lib.github.io/docu/news/&quot;&gt;news&lt;/a&gt; section where most of the content of this blog is being migrated (not too much content). I plan to expand this page with...</content>
+ </entry>
 
  
 
