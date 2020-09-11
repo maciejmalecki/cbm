@@ -1,0 +1,54 @@
+@startuml
+
+skinparam rectangle<<node>> {
+  roundCorner 20
+}
+skinparam rectangle<<wifi>> {
+  backgroundColor lightblue
+}
+skinparam rectangle<<server>> {
+  roundCorner 20
+  backgroundColor lightGreen
+}
+skinparam cloud {
+  backgroundColor beige
+}
+
+sprite $server jar:archimate/technology-node
+sprite $sensingNode jar:archimate/flow
+sprite $commandNode jar:archimate/driver
+sprite $node jar:archimate/device
+sprite $wifi jar:archimate/communication-path
+
+rectangle "WiFi Router\nFritzBox! 4040" as FB <<$wifi>><<wifi>>
+rectangle "WiFi Repeater\nFritzBox! 310" as FB310_0 <<$wifi>><<wifi>>
+rectangle "WiFi Repeater\nFritzBox! 310" as FB310_1 <<$wifi>><<wifi>>
+rectangle "HomeAssistant\nRaspberry Pi 3B+" as HA <<$server>><<server>>
+rectangle "SmartGardener\nESP 8266" as SGD <<$node>><<node>>
+rectangle "SmartGate\nESP 8266" as SGT <<$node>><<node>>
+rectangle "SmartHeater\nESP 8266" as SHT <<$node>><<node>>
+rectangle "WeatherStation\nESP 8266" as WS0 <<$sensingNode>><<node>>
+rectangle "WeatherStation\nESP 8266" as WS1 <<$sensingNode>><<node>>
+cloud "Internet" as ITN
+
+FB <-up-> ITN
+
+FB310_0 <-> FB
+FB310_1 <-> FB
+
+HA <-down-> FB
+
+SGD <-up-> FB310_0
+SHT <-up-> FB310_0
+SGT <-up-> FB
+WS0 <-up-> FB310_1
+WS1 <-up-> FB
+
+legend right
+<$server> : multipurpose server
+<$sensingNode> : remote node equipped with sensors
+<$commandNode> : remote node that perform actions
+<$node>: universal node that is both sensing and performing actions
+<$wifi>: WiFi network element
+endlegend
+@enduml
