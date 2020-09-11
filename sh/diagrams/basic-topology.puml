@@ -1,0 +1,34 @@
+@startuml
+
+skinparam rectangle<<node>> {
+  roundCorner 20
+}
+
+sprite $server jar:archimate/technology-node
+sprite $sensingNode jar:archimate/flow
+sprite $commandNode jar:archimate/driver
+sprite $node jar:archimate/device
+
+rectangle "RPi Server" as RP <<$server>>
+rectangle "Node" as N1 <<$sensingNode>><<node>>
+rectangle "Node" as N2 <<$sensingNode>><<node>>
+rectangle "Node" as N3 <<$commandNode>><<node>>
+rectangle "Node" as N4 <<$node>><<node>>
+rectangle "Node" as N5 <<$node>><<node>>
+rectangle "Node" as N6 <<$sensingNode>><<node>>
+
+N1 -down-> RP
+N2 -down-> RP
+N3 <-left- RP
+N4 <-right-> RP
+N5 <-up-> RP
+N6 -up-> RP
+
+legend right
+<$server> : multipurpose server
+<$sensingNode> : remote node equipped with sensors
+<$commandNode> : remote node that perform actions
+<$node>: universal node that is both sensing and performing actions
+endlegend
+
+@enduml
