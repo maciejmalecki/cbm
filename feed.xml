@@ -1,4 +1,58 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://maciejmalecki.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://maciejmalecki.github.io/blog/" rel="alternate" type="text/html" /><updated>2020-09-11T14:45:56+00:00</updated><id>https://maciejmalecki.github.io/blog/</id><title type="html">()=&amp;gt;{} | Void’s blog</title><subtitle>t.b.d.</subtitle><author><name>Maciej Małecki</name></author><entry><title type="html">Documentation site for the c64lib finally available</title><link href="https://maciejmalecki.github.io/blog/docu-for-c64lib" rel="alternate" type="text/html" title="Documentation site for the c64lib finally available" /><published>2019-12-04T00:00:00+00:00</published><updated>2019-12-04T00:00:00+00:00</updated><id>https://maciejmalecki.github.io/blog/docu-for-c64lib</id><content type="html" xml:base="https://maciejmalecki.github.io/blog/docu-for-c64lib">&lt;p&gt;I have finally managed to set up documentation web site for &lt;a href=&quot;https://github.com/c64lib&quot;&gt;c64lib&lt;/a&gt;. It is available under
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://maciejmalecki.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://maciejmalecki.github.io/blog/" rel="alternate" type="text/html" /><updated>2020-09-11T21:20:27+00:00</updated><id>https://maciejmalecki.github.io/blog/</id><title type="html">()=&amp;gt;{} | Void’s blog</title><subtitle>t.b.d.</subtitle><author><name>Maciej Małecki</name></author><entry><title type="html">Internet of Things done cheaply with ESP 8266</title><link href="https://maciejmalecki.github.io/blog/esp8266" rel="alternate" type="text/html" title="Internet of Things done cheaply with ESP 8266" /><published>2020-09-11T00:00:00+00:00</published><updated>2020-09-11T00:00:00+00:00</updated><id>https://maciejmalecki.github.io/blog/esp8266</id><content type="html" xml:base="https://maciejmalecki.github.io/blog/esp8266">&lt;p&gt;For some time I had an idea to do few “home improvements” and, as a side effect, learn a bit about microcontrollers and electronics. So called “smart home” can be expensive - there are a lot of out-of-the-box solutions that cost a small fortune (as I said: “for some time”, now it is cheaper). So my idea really was: can I do it as cheap as possible?&lt;/p&gt;
+
+&lt;p&gt;After some research I decided to build my solution around some central software working on Raspberry Pi 3 and some amount of sensing- and command-nodes built with some cheap MCUs and radio transmitters, maybe even battery powered. My initial choice was to use AVR microcontrolers (yes, the ones from Arduino) and cheap NRF24L01 transceivers.&lt;/p&gt;
+
+&lt;p&gt;I wanted to build something looking like star (see diagram):&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://www.plantuml.com/plantuml/proxy?cache=no&amp;amp;src=https://raw.githubusercontent.com/maciejmalecki/blog/master/sh/diagrams/basic-topology.puml&quot; alt=&quot;Initial topology&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So I’ve purchased several RF24 modules, few AVR, two Arduino Uno modules, a bootloader burning shield and even built a few prototype devices. But I also found several problems:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;NRF24L01 has serious limitation - only 1 transmitting channel and only 4 receiving channels. That means I can use only up to 4 devices in star topology!&lt;/li&gt;
+  &lt;li&gt;When used within building, the range of RF is seriously limited - star topology is anyway not achievable.&lt;/li&gt;
+  &lt;li&gt;Each device must have unique address, so if I don’t want to have this address configurable, I would most likely need an option to configure node (i.e. by pressing magic button while resetting).&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Each of this problem is apparently solvable: you build mesh network out of RF24 modules, you can implement nice configuration capability via a serial interface, you can store configuration in EEPROM, etc. But this will consume more and more time to develop and test and if I don’t have quick results, I easily get tired and annoyed. So the project was de facto suspended for few years.&lt;/p&gt;
+
+&lt;p&gt;Until I’ve accidentally heard of ESP 8266 thing…&lt;/p&gt;
+
+&lt;p&gt;ESP 8266 is a tiny and cheap WiFi module with complete TCP/IP stack. It can be used with Arduino or other systems lacking its own radio capabilities. It was soon discovered, that ESP module itself has microcontroler capability that are significant. It contains 32 RISC microprocessor, runs at 80MHz, over 64KiB RAM and up to 16MiB Flash Memory support. There are 16 GPIO pins (typically 10 are available) and one ADC pin. This is more than enough for most of applications, and relatively big processing power and memory allows unusual as for microcontroler capabilities of running HTTP web server.&lt;/p&gt;
+
+&lt;p&gt;The built in WiFi transceiver allows completely new network topology to be used. It runs on WiFi infrastructure that most of our homes are equipped with:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://www.plantuml.com/plantuml/proxy?cache=no&amp;amp;src=https://raw.githubusercontent.com/maciejmalecki/blog/master/sh/diagrams/wifi-topology.puml&quot; alt=&quot;WiFi topology&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I decided to make my life even easier and installed specialized firmware on my Raspberry called Home Assistant (see &lt;a href=&quot;https://www.home-assistant.io/&quot;&gt;1&lt;/a&gt;). Home Assistant deserves separate post, I will just mention a few killing features:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;It runs web server and has nice, configurable web GUI.&lt;/li&gt;
+  &lt;li&gt;The GUI is both responsive (looks good on mobile) and progressive (PWA) - that means it can install and look almost like native smartphone app.&lt;/li&gt;
+  &lt;li&gt;Sophisticated configuration capabilities allow for complex automations.&lt;/li&gt;
+  &lt;li&gt;It contains MQTT broker that makes integration with ESP based nodes seamless.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://maciejmalecki.github.io/blog/sh/img/ha-dashboard.jpg&quot; alt=&quot;Home Assistant Dashboard&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;All this means we can build a very complex home automation in days. It can have a very modern, event based architecture and be completely configurable via web with any web browser.&lt;/p&gt;
+
+&lt;p&gt;There are many ways the ESP 8266 module can be programmed. One can use Arduino IDE with appropriate plugin or use Lua programming language with specialized firmware called NodeMCU. For lazy people there are dedicated firmwares that require (almost) no programming. Amongst them the most popular are Tasmota and ESP Easy. In next posts I will focus on the latter.&lt;/p&gt;
+
+&lt;p&gt;ESP Easy allows for easy click-thru configuration via web for most of use cases:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://maciejmalecki.github.io/blog/sh/img/esp-easy-devices.png&quot; alt=&quot;ESP Easy devices&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This is more than sufficient if we use Home Assistant as a brain of our devices. But we can also make our nodes more smart and autonomous with so called rules, which is in fact a very simple, event oriented programming language:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://maciejmalecki.github.io/blog/sh/img/esp-easy-rules.png&quot; alt=&quot;ESP Easy rules&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In next posts I will make you more familiar with smart home architectures, instalation and configuration of ESP Easy firmware as well as with rules language.&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;[1] &lt;a href=&quot;https://www.home-assistant.io/&quot;&gt;Home Assistant home&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;[2] &lt;a href=&quot;https://www.letscontrolit.com/wiki/index.php/ESPEasy&quot;&gt;ESP Easy documentation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;[3] &lt;a href=&quot;https://espeasy.readthedocs.io/en/latest/&quot;&gt;New ESP Easy guide (good!)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Maciej Małecki</name></author><summary type="html">For some time I had an idea to do few “home improvements” and, as a side effect, learn a bit about microcontrollers and electronics. So called “smart home” can be expensive - there are a lot of out-of-the-box solutions that cost a small fortune (as I said: “for some time”, now it is cheaper). So my idea really was: can I do it as cheap as possible?</summary></entry><entry><title type="html">Documentation site for the c64lib finally available</title><link href="https://maciejmalecki.github.io/blog/docu-for-c64lib" rel="alternate" type="text/html" title="Documentation site for the c64lib finally available" /><published>2019-12-04T00:00:00+00:00</published><updated>2019-12-04T00:00:00+00:00</updated><id>https://maciejmalecki.github.io/blog/docu-for-c64lib</id><content type="html" xml:base="https://maciejmalecki.github.io/blog/docu-for-c64lib">&lt;p&gt;I have finally managed to set up documentation web site for &lt;a href=&quot;https://github.com/c64lib&quot;&gt;c64lib&lt;/a&gt;. It is available under
 following link: &lt;a href=&quot;https://c64lib.github.io/docu/&quot;&gt;https://c64lib.github.io/docu/&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;There is a dedicated &lt;a href=&quot;https://c64lib.github.io/docu/news/&quot;&gt;news&lt;/a&gt; section where most of the content of this blog is being migrated

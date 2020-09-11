@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113535243-1"></script>
+	<script>
+		var useCookies = (localStorage.getItem('useCookies') === 'true');
+		if (useCookies) {
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'UA-113535243-1', { 'anonymize_ip': true });
+		}
+	</script>
+	
+
+	<!-- Meta -->
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+	<meta name="generator" content="Jekyll">
+
+	<title>Internet of Things done cheaply with ESP 8266</title>
+  <meta name="description" content="t.b.d.">
+
+	<!-- CSS & fonts -->
+	<link rel="stylesheet" href="/blog/css/main.css">
+
+	<!-- RSS -->
+	<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png">
+
+</head>
+
+
+<body>
+	<div id="wrap">
+
+	  	<!-- Navigation -->
+	  	<nav id="nav">
+	<div id="nav-list">
+		<a href="/blog/">Home</a>
+
+		<!-- Nav pages -->
+	  
+	    
+	  
+	    
+	      <a href="/blog/about" title="About">About</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	      <a href="/blog/privacy" title="Privacy">Privacy</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+    
+    <!-- Nav links -->
+	  <a href="https://github.com/maciejmalecki">Github</a>
+
+
+	</div>
+  
+  <!-- Nav footer -->
+	
+	  <footer>
+	
+	<span>version 1.0.0</span>
+
+</footer>
+	
+
+</nav>
+
+
+    <!-- Icon menu -->
+	  <a id="nav-menu">
+	  	<div id="menu"></div>
+	  </a>
+
+      <!-- Header -->
+      
+        <header id="header" class="parent justify-spaceBetween">
+  <div class="inner w100 relative">
+    <span class="f-left">  
+      <a href="/blog/">
+          <h1><code>()=>{}</code></h1>
+      </a>
+    </span>
+    <span id="nav-links" class="absolute right bottom">
+      <!-- Nav pages -->
+	    
+	      
+	    
+	      
+	        <a href="/blog/about" title="About">About</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	        <a href="/blog/privacy" title="Privacy">Privacy</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+      
+      <!-- Nav links -->
+	    <a href="https://github.com/maciejmalecki">Github</a>
+
+
+    </span>
+  </div>
+</header>
+
+
+
+
+      
+
+    <!-- Main content -->
+	  <div id="container">
+
+		<main>
+
+			<article id="post-page">
+	<h2>Internet of Things done cheaply with ESP 8266</h2>		
+	<time datetime="2020-09-11T00:00:00+00:00" class="by-line">11 Sep 2020</time>
+	<div class="content">
+
+		<p>For some time I had an idea to do few “home improvements” and, as a side effect, learn a bit about microcontrollers and electronics. So called “smart home” can be expensive - there are a lot of out-of-the-box solutions that cost a small fortune (as I said: “for some time”, now it is cheaper). So my idea really was: can I do it as cheap as possible?</p>
+
+<p>After some research I decided to build my solution around some central software working on Raspberry Pi 3 and some amount of sensing- and command-nodes built with some cheap MCUs and radio transmitters, maybe even battery powered. My initial choice was to use AVR microcontrolers (yes, the ones from Arduino) and cheap NRF24L01 transceivers.</p>
+
+<p>I wanted to build something looking like star (see diagram):</p>
+
+<p><img src="http://www.plantuml.com/plantuml/proxy?cache=no&amp;src=https://raw.githubusercontent.com/maciejmalecki/blog/master/sh/diagrams/basic-topology.puml" alt="Initial topology" /></p>
+
+<p>So I’ve purchased several RF24 modules, few AVR, two Arduino Uno modules, a bootloader burning shield and even built a few prototype devices. But I also found several problems:</p>
+<ol>
+  <li>NRF24L01 has serious limitation - only 1 transmitting channel and only 4 receiving channels. That means I can use only up to 4 devices in star topology!</li>
+  <li>When used within building, the range of RF is seriously limited - star topology is anyway not achievable.</li>
+  <li>Each device must have unique address, so if I don’t want to have this address configurable, I would most likely need an option to configure node (i.e. by pressing magic button while resetting).</li>
+</ol>
+
+<p>Each of this problem is apparently solvable: you build mesh network out of RF24 modules, you can implement nice configuration capability via a serial interface, you can store configuration in EEPROM, etc. But this will consume more and more time to develop and test and if I don’t have quick results, I easily get tired and annoyed. So the project was de facto suspended for few years.</p>
+
+<p>Until I’ve accidentally heard of ESP 8266 thing…</p>
+
+<p>ESP 8266 is a tiny and cheap WiFi module with complete TCP/IP stack. It can be used with Arduino or other systems lacking its own radio capabilities. It was soon discovered, that ESP module itself has microcontroler capability that are significant. It contains 32 RISC microprocessor, runs at 80MHz, over 64KiB RAM and up to 16MiB Flash Memory support. There are 16 GPIO pins (typically 10 are available) and one ADC pin. This is more than enough for most of applications, and relatively big processing power and memory allows unusual as for microcontroler capabilities of running HTTP web server.</p>
+
+<p>The built in WiFi transceiver allows completely new network topology to be used. It runs on WiFi infrastructure that most of our homes are equipped with:</p>
+
+<p><img src="http://www.plantuml.com/plantuml/proxy?cache=no&amp;src=https://raw.githubusercontent.com/maciejmalecki/blog/master/sh/diagrams/wifi-topology.puml" alt="WiFi topology" /></p>
+
+<p>I decided to make my life even easier and installed specialized firmware on my Raspberry called Home Assistant (see <a href="https://www.home-assistant.io/">1</a>). Home Assistant deserves separate post, I will just mention a few killing features:</p>
+<ol>
+  <li>It runs web server and has nice, configurable web GUI.</li>
+  <li>The GUI is both responsive (looks good on mobile) and progressive (PWA) - that means it can install and look almost like native smartphone app.</li>
+  <li>Sophisticated configuration capabilities allow for complex automations.</li>
+  <li>It contains MQTT broker that makes integration with ESP based nodes seamless.</li>
+</ol>
+
+<p><img src="https://maciejmalecki.github.io/blog/sh/img/ha-dashboard.jpg" alt="Home Assistant Dashboard" /></p>
+
+<p>All this means we can build a very complex home automation in days. It can have a very modern, event based architecture and be completely configurable via web with any web browser.</p>
+
+<p>There are many ways the ESP 8266 module can be programmed. One can use Arduino IDE with appropriate plugin or use Lua programming language with specialized firmware called NodeMCU. For lazy people there are dedicated firmwares that require (almost) no programming. Amongst them the most popular are Tasmota and ESP Easy. In next posts I will focus on the latter.</p>
+
+<p>ESP Easy allows for easy click-thru configuration via web for most of use cases:</p>
+
+<p><img src="https://maciejmalecki.github.io/blog/sh/img/esp-easy-devices.png" alt="ESP Easy devices" /></p>
+
+<p>This is more than sufficient if we use Home Assistant as a brain of our devices. But we can also make our nodes more smart and autonomous with so called rules, which is in fact a very simple, event oriented programming language:</p>
+
+<p><img src="https://maciejmalecki.github.io/blog/sh/img/esp-easy-rules.png" alt="ESP Easy rules" /></p>
+
+<p>In next posts I will make you more familiar with smart home architectures, instalation and configuration of ESP Easy firmware as well as with rules language.</p>
+
+<h2 id="references">References</h2>
+<ul>
+  <li>[1] <a href="https://www.home-assistant.io/">Home Assistant home</a></li>
+  <li>[2] <a href="https://www.letscontrolit.com/wiki/index.php/ESPEasy">ESP Easy documentation</a></li>
+  <li>[3] <a href="https://espeasy.readthedocs.io/en/latest/">New ESP Easy guide (good!)</a></li>
+</ul>
+
+
+		
+	</div>
+</article>
+
+
+
+	  </main>
+
+		  <!-- Pagination links -->
+      
+
+	  </div>
+
+	    <!-- Footer -->
+	    <footer><span>&#169;2018-2020 Maciej Małecki</span></footer>
+
+
+      <div id="gdpr" style="display: none;">
+        <p>
+          This web page uses cookies to track anonymous user activities. By continuing using this site
+          or by closing this banner you indicate your consent to use these cookies.
+          You can change settings, i.e. disable user tracking on <a href="privacy.html">privacy</a> page.
+        </p>
+        <button id="gdprClose">Close</button>
+      </div>
+
+	    <!-- Script -->
+      <script src="/blog/js/main.js"></script>	
+
+
+	</div>
+
+</body>
+</html>

@@ -4,12 +4,22 @@
  <title>()=>{} | Void's blog</title>
  <link href="https://maciejmalecki.github.io/atom.xml" rel="self"/>
  <id>https://maciejmalecki.github.io</id>
- <updated>2020-09-11T14:45:56+00:00</updated>
+ <updated>2020-09-11T21:20:27+00:00</updated>
  <author>
    <name></name>
    <uri></uri>
    <email></email>
  </author>
+
+ 
+
+ <entry>
+   <title>Internet of Things done cheaply with ESP 8266</title>
+   <link href="https://maciejmalecki.github.io/esp8266"/>
+   <id>https://maciejmalecki.github.io/esp8266</id>
+   <updated>2020-09-11T00:00:00+00:00</updated>
+   <content type="html">&lt;p&gt;For some time I had an idea to do few “home improvements” and, as a side effect, learn a bit about microcontrollers and electronics. So called “smart home” can be expensive - there are a lot of out-of-the-box solutions that cost a small fortune (as I said: “for some time”,...</content>
+ </entry>
 
  
 
