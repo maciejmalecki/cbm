@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113535243-1"></script>
+	<script>
+		var useCookies = (localStorage.getItem('useCookies') === 'true');
+		if (useCookies) {
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'UA-113535243-1', { 'anonymize_ip': true });
+		}
+	</script>
+	
+
+	<!-- Meta -->
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+	<meta name="generator" content="Jekyll">
+
+	<title>Weather Station with ESP 8266 (part 1)</title>
+  <meta name="description" content="t.b.d.">
+
+	<!-- CSS & fonts -->
+	<link rel="stylesheet" href="/blog/css/main.css">
+
+	<!-- RSS -->
+	<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png">
+
+</head>
+
+
+<body>
+	<div id="wrap">
+
+	  	<!-- Navigation -->
+	  	<nav id="nav">
+	<div id="nav-list">
+		<a href="/blog/">Home</a>
+
+		<!-- Nav pages -->
+	  
+	    
+	  
+	    
+	      <a href="/blog/about" title="About">About</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	      <a href="/blog/privacy" title="Privacy">Privacy</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+    
+    <!-- Nav links -->
+	  <a href="https://github.com/maciejmalecki">Github</a>
+
+
+	</div>
+  
+  <!-- Nav footer -->
+	
+	  <footer>
+	
+	<span>version 1.0.0</span>
+
+</footer>
+	
+
+</nav>
+
+
+    <!-- Icon menu -->
+	  <a id="nav-menu">
+	  	<div id="menu"></div>
+	  </a>
+
+      <!-- Header -->
+      
+        <header id="header" class="parent justify-spaceBetween">
+  <div class="inner w100 relative">
+    <span class="f-left">  
+      <a href="/blog/">
+          <h1><code>()=>{}</code></h1>
+      </a>
+    </span>
+    <span id="nav-links" class="absolute right bottom">
+      <!-- Nav pages -->
+	    
+	      
+	    
+	      
+	        <a href="/blog/about" title="About">About</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	        <a href="/blog/privacy" title="Privacy">Privacy</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+      
+      <!-- Nav links -->
+	    <a href="https://github.com/maciejmalecki">Github</a>
+
+
+    </span>
+  </div>
+</header>
+
+
+
+
+      
+
+    <!-- Main content -->
+	  <div id="container">
+
+		<main>
+
+			<article id="post-page">
+	<h2>Weather Station with ESP 8266 (part 1)</h2>		
+	<time datetime="2020-11-17T00:00:00+00:00" class="by-line">17 Nov 2020</time>
+	<div class="content">
+
+		<p>The ESP 8266 has relatively high power consumption (around 70-80mA) which makes battery powered devices difficult to build, unless we accept a very short battery lifetime. Reasons for this are apparently connected with WiFi communication model, which is not especially economical, big processing power of the ESP chip itself has also an influence on this.</p>
+
+<p>The situation is not that bad as it looks, as there are a few power saving modes of the ESP 8266, from which the so-called deep sleep mode seems to be a very promising. In deep sleep mode the power consumption is vastly reduced to around 10uA, which is a very small number.</p>
+
+<p><img src="https://maciejmalecki.github.io/blog/sh/img/weather-inside.jpg" alt="Weather station interior" /></p>
+
+<p>The weather station seems to be an ideal project for deep sleep mode, because we usually don’t need to take measurements all the time, but instead we can wait a certain amount of minutes. The longer the wait interval is, the longer deep sleep mode can be used thus the overall power consumption is lowered.</p>
+
+<p>The ESP 8266 itself operates in 3.0-3.6V area and nominal voltage should be around 3.3V. After some experiments I decided to use a single 18650 Li-ion rechargeable battery and an LDO voltage stabilizer with limits the voltage of the power source to the safe 3.3V level.</p>
+
+<p>Originally I have also decided to use a cheap DHT11 sensor, but it seems to be unreliable with humidity measurements, so I reverted to use more expensive BME280. As a bonus I got a pressure meter and much lower idle state power consumption of the sensor.</p>
+
+<p>The project is described with details on GitHub: <a href="https://github.com/maciejmalecki/weather">https://github.com/maciejmalecki/weather</a>.</p>
+
+
+		
+	</div>
+</article>
+
+
+
+	  </main>
+
+		  <!-- Pagination links -->
+      
+
+	  </div>
+
+	    <!-- Footer -->
+	    <footer><span>&#169;2018-2020 Maciej Małecki</span></footer>
+
+
+      <div id="gdpr" style="display: none;">
+        <p>
+          This web page uses cookies to track anonymous user activities. By continuing using this site
+          or by closing this banner you indicate your consent to use these cookies.
+          You can change settings, i.e. disable user tracking on <a href="privacy.html">privacy</a> page.
+        </p>
+        <button id="gdprClose">Close</button>
+      </div>
+
+	    <!-- Script -->
+      <script src="/blog/js/main.js"></script>	
+
+
+	</div>
+
+</body>
+</html>

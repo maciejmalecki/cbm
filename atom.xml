@@ -4,12 +4,22 @@
  <title>()=>{} | Void's blog</title>
  <link href="https://maciejmalecki.github.io/atom.xml" rel="self"/>
  <id>https://maciejmalecki.github.io</id>
- <updated>2020-10-08T20:43:33+00:00</updated>
+ <updated>2020-11-17T22:53:43+00:00</updated>
  <author>
    <name></name>
    <uri></uri>
    <email></email>
  </author>
+
+ 
+
+ <entry>
+   <title>Weather Station with ESP 8266 (part 1)</title>
+   <link href="https://maciejmalecki.github.io/esp8266-weather-station-1"/>
+   <id>https://maciejmalecki.github.io/esp8266-weather-station-1</id>
+   <updated>2020-11-17T00:00:00+00:00</updated>
+   <content type="html">&lt;p&gt;The ESP 8266 has relatively high power consumption (around 70-80mA) which makes battery powered devices difficult to build, unless we accept a very short battery lifetime. Reasons for this are apparently connected with WiFi communication model, which is not especially economical, big processing power of the ESP chip itself has...</content>
+ </entry>
 
  
 
