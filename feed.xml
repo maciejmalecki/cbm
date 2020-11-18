@@ -1,16 +1,78 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://maciejmalecki.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://maciejmalecki.github.io/blog/" rel="alternate" type="text/html" /><updated>2020-11-17T22:53:43+00:00</updated><id>https://maciejmalecki.github.io/blog/</id><title type="html">()=&amp;gt;{} | Void’s blog</title><subtitle>t.b.d.</subtitle><author><name>Maciej Małecki</name></author><entry><title type="html">Weather Station with ESP 8266 (part 1)</title><link href="https://maciejmalecki.github.io/blog/esp8266-weather-station-1" rel="alternate" type="text/html" title="Weather Station with ESP 8266 (part 1)" /><published>2020-11-17T00:00:00+00:00</published><updated>2020-11-17T00:00:00+00:00</updated><id>https://maciejmalecki.github.io/blog/esp8266-weather-station-1</id><content type="html" xml:base="https://maciejmalecki.github.io/blog/esp8266-weather-station-1">&lt;p&gt;The ESP 8266 has relatively high power consumption (around 70-80mA) which makes battery powered devices difficult to build, unless we accept a very short battery lifetime. Reasons for this are apparently connected with WiFi communication model, which is not especially economical, big processing power of the ESP chip itself has also an influence on this.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://maciejmalecki.github.io/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://maciejmalecki.github.io/blog/" rel="alternate" type="text/html" /><updated>2020-11-18T22:39:04+00:00</updated><id>https://maciejmalecki.github.io/blog/</id><title type="html">()=&amp;gt;{} | Void’s blog</title><subtitle>t.b.d.</subtitle><author><name>Maciej Małecki</name></author><entry><title type="html">Gradle Retro Assembler plugin is released</title><link href="https://maciejmalecki.github.io/blog/gradle-retro-plugin" rel="alternate" type="text/html" title="Gradle Retro Assembler plugin is released" /><published>2020-11-18T00:00:00+00:00</published><updated>2020-11-18T00:00:00+00:00</updated><id>https://maciejmalecki.github.io/blog/gradle-retro-plugin</id><content type="html" xml:base="https://maciejmalecki.github.io/blog/gradle-retro-plugin">&lt;p&gt;The idea of a tool that can automatically download all dependencies and build my 6502 projects
+arose some time &lt;a href=&quot;assembler-libraries&quot;&gt;ago&lt;/a&gt;. In the meantime I started using 
+&lt;a href=&quot;https://64bites.com/64spec/&quot;&gt;64spec&lt;/a&gt; for testing my assembly code. The library itself is great but requires a lot of manual
+operations once a great number of test files are created.&lt;/p&gt;
 
-&lt;p&gt;The situation is not that bad as it looks, as there are a few power saving modes of the ESP 8266, from which the so-called deep sleep mode seems to be a very promising. In deep sleep mode the power consumption is vastly reduced to around 10uA, which is a very small number.&lt;/p&gt;
+&lt;p&gt;I have noticed that Michał Taszycki, an author of &lt;a href=&quot;https://64bites.com/64spec/&quot;&gt;64spec&lt;/a&gt;, has already written
+a proof of concept tool, so that 64spec can be used from command line rather than by using
+user interface of Vice. I have looked into &lt;a href=&quot;https://github.com/64bites/64spec-cli/&quot;&gt;64spec-cli&lt;/a&gt; and decided that it would
+be possible to reimplement it in Java.&lt;/p&gt;
+
+&lt;p&gt;The result of my work has actually exceeded my expectations: it’s a fully functional Gradle plugin
+written in Kotlin, which not only can assemble and test KickAssembler code, but also has a simple yet
+effective dependency management mechanism built in.&lt;/p&gt;
+
+&lt;h2 id=&quot;why-builds-should-be-automated&quot;&gt;Why builds should be automated?&lt;/h2&gt;
+&lt;p&gt;As a build we understand a process of compiling/assembling source code of a program into
+executable form. In the beginning of IT industry this was realized by some dedicated
+scripts written in &lt;em&gt;sh&lt;/em&gt; or &lt;em&gt;bash&lt;/em&gt;, and then quickly a tool called &lt;em&gt;make&lt;/em&gt; was created. Simple
+command line &lt;code class=&quot;highlighter-rouge&quot;&gt;make&lt;/code&gt; executed an “instruction” written as &lt;em&gt;makefile&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Then, in golden IDE era (90-ties and 2000-ties), a build process was connected with single key stroke - the 
+IDE was responsible for finding all the sources in the project and compile them into executable form.
+Automation capabilities derived from &lt;em&gt;make&lt;/em&gt;-like tools were sort of forgotten.&lt;/p&gt;
+
+&lt;p&gt;But then, again, the &lt;em&gt;Continuous Integration&lt;/em&gt; (in short: CI) term became a buzzword. The idea was very simple: a 
+product should be build regularly (nightly or even after each repository push). The clear benefit
+out of it is that all potential integration problems with the software can be detected very
+early vs usually a night before deadline ;-) I don’t want to replicate descriptions already existing there so
+maybe go and get familiar with &lt;a href=&quot;https://www.thoughtworks.com/continuous-integration&quot;&gt;this Thoughtworks page&lt;/a&gt; to see why CI is so important.&lt;/p&gt;
+
+&lt;p&gt;So automation came back into the play, with dedicated software like CruiseControl, Hudson or Jenkins, and 
+most recently a cloud-based Travis-CI and CircleCI. And again, we needed build scripts and build tools.
+But this time we had a complete new generation of programming languages. In Java world we have Ant, Maven and
+recently Gradle.&lt;/p&gt;
+
+&lt;p&gt;When I was back into 6502 assembly, I was especially lacking build tools. Of course I can use &lt;em&gt;make&lt;/em&gt; to do
+virtually anything, but I was sort of used to minimalism of Maven - almost nothing needs to be defined in
+Maven build file to build standard Java project. I wanted something similar for KickAss.&lt;/p&gt;
+
+&lt;h2 id=&quot;why-gradle&quot;&gt;Why Gradle?&lt;/h2&gt;
+&lt;p&gt;I don’t like &lt;em&gt;make&lt;/em&gt; because it is Unix-centric and I personally use both Linux and Windows based workstations.
+Of course I can force anybody to install CygWin so that they can build with &lt;em&gt;make&lt;/em&gt; using Windows machines.
+Ant, which is great and portable, is also a bit old fashioned. It uses XML based syntax which does not
+look very nice and user friendly.&lt;/p&gt;
+
+&lt;p&gt;Gradle is relative new but it is based on similar concept of tasks and it uses Groovy language to write
+build definition file. So it is not only more readable than XML, but it also give you freedom to script what you
+like including loops and ifs.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-to-use-it&quot;&gt;How to use it?&lt;/h2&gt;
+&lt;p&gt;Complete usage instruction is available on &lt;a href=&quot;assembler-libraries&quot;&gt;GitHub&lt;/a&gt;. The plugin as such is something that does not need to be
+separately downloaded or installed. It is a regular Gradle dependency that can be reached from &lt;a href=&quot;https://plugins.gradle.org/plugin/com.github.c64lib.retro-assembler&quot;&gt;plugins.gradle.org&lt;/a&gt; 
+portal.&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;[1] &lt;a href=&quot;assembler-libraries&quot;&gt;assembler-libraries&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;[2] &lt;a href=&quot;https://64bites.com/64spec/&quot;&gt;https://64bites.com/64spec/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;[3] &lt;a href=&quot;https://github.com/64bites/64spec-cli/&quot;&gt;https://github.com/64bites/64spec-cli/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;[4] &lt;a href=&quot;https://www.thoughtworks.com/continuous-integration&quot;&gt;https://www.thoughtworks.com/continuous-integration&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;[5] &lt;a href=&quot;https://github.com/c64lib/gradle-retro-assembler-plugin&quot;&gt;https://github.com/c64lib/gradle-retro-assembler-plugin&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;[6] &lt;a href=&quot;https://plugins.gradle.org/plugin/com.github.c64lib.retro-assembler&quot;&gt;https://plugins.gradle.org/plugin/com.github.c64lib.retro-assembler&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Maciej Małecki</name></author><summary type="html">The idea of a tool that can automatically download all dependencies and build my 6502 projects arose some time ago. In the meantime I started using 64spec for testing my assembly code. The library itself is great but requires a lot of manual operations once a great number of test files are created.</summary></entry><entry><title type="html">Weather Station with ESP 8266 (part 1)</title><link href="https://maciejmalecki.github.io/blog/esp8266-weather-station-1" rel="alternate" type="text/html" title="Weather Station with ESP 8266 (part 1)" /><published>2020-11-17T00:00:00+00:00</published><updated>2020-11-17T00:00:00+00:00</updated><id>https://maciejmalecki.github.io/blog/esp8266-weather-station-1</id><content type="html" xml:base="https://maciejmalecki.github.io/blog/esp8266-weather-station-1">&lt;p&gt;The ESP 8266 has relatively high power consumption (around 70-80mA) which makes battery powered devices difficult to build, unless we accept a very short battery lifetime. Reasons for this are apparently connected with WiFi communication model, which is not especially economical, big processing power of the ESP chip itself has also an influence on this.&lt;/p&gt;
+
+&lt;p&gt;But I really like 8266 because setting up the network topology is trivial - there is nothing to be set as I will use my existing home network. These devices also need to be battery powered, because I don’t want to put wires. So I have checked several options and this is what I found. The situation is not that bad as it looks, as there are a few power saving modes of the ESP 8266, from which the so-called deep sleep mode seems to be a very promising. In deep sleep mode the power consumption can be vastly reduced to around 10uA, which is a very small number.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://maciejmalecki.github.io/blog/sh/img/weather-inside.jpg&quot; alt=&quot;Weather station interior&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;The weather station seems to be an ideal project for deep sleep mode, because we usually don’t need to take measurements all the time, but instead we can wait a certain amount of minutes. The longer the wait interval is, the longer deep sleep mode can be used thus the overall power consumption is lowered.&lt;/p&gt;
+&lt;p&gt;The weather station seems to be an ideal project for deep sleep mode, because we usually don’t need to take measurements all the time, but instead we can wait a certain amount of minutes. The longer the wait interval is, the longer deep sleep mode can be used thus I can lower the overall power consumption.&lt;/p&gt;
 
-&lt;p&gt;The ESP 8266 itself operates in 3.0-3.6V area and nominal voltage should be around 3.3V. After some experiments I decided to use a single 18650 Li-ion rechargeable battery and an LDO voltage stabilizer with limits the voltage of the power source to the safe 3.3V level.&lt;/p&gt;
+&lt;p&gt;The ESP 8266 itself operates in 3.0-3.6V area and nominal voltage should be around 3.3V. After some experiments I decided to use a single 18650 Li-ion rechargeable battery, and an LDO voltage stabilizer with limits the voltage of the power source to the safe 3.3V level. It is noteworthy the best 18650 cells are around 3400mAh. If you see much better (as for 2020), i.e. over 10000mAh, there are fake for sure. Just don’t buy it.&lt;/p&gt;
 
 &lt;p&gt;Originally I have also decided to use a cheap DHT11 sensor, but it seems to be unreliable with humidity measurements, so I reverted to use more expensive BME280. As a bonus I got a pressure meter and much lower idle state power consumption of the sensor.&lt;/p&gt;
 
-&lt;p&gt;The project is described with details on GitHub: &lt;a href=&quot;https://github.com/maciejmalecki/weather&quot;&gt;https://github.com/maciejmalecki/weather&lt;/a&gt;.&lt;/p&gt;</content><author><name>Maciej Małecki</name></author><summary type="html">The ESP 8266 has relatively high power consumption (around 70-80mA) which makes battery powered devices difficult to build, unless we accept a very short battery lifetime. Reasons for this are apparently connected with WiFi communication model, which is not especially economical, big processing power of the ESP chip itself has also an influence on this.</summary></entry><entry><title type="html">Internet of Things done cheaply with ESP 8266</title><link href="https://maciejmalecki.github.io/blog/esp8266" rel="alternate" type="text/html" title="Internet of Things done cheaply with ESP 8266" /><published>2020-09-11T00:00:00+00:00</published><updated>2020-09-11T00:00:00+00:00</updated><id>https://maciejmalecki.github.io/blog/esp8266</id><content type="html" xml:base="https://maciejmalecki.github.io/blog/esp8266">&lt;p&gt;For some time I had an idea to do few “home improvements” and, as a side effect, learn a bit about microcontrollers and electronics. So called “smart home” can be expensive - there are a lot of out-of-the-box solutions that cost a small fortune (as I said: “for some time”, now it is cheaper). So my idea really was: can I do it as cheap as possible?&lt;/p&gt;
+&lt;p&gt;I describe the project with details on GitHub: &lt;a href=&quot;https://github.com/maciejmalecki/weather&quot;&gt;https://github.com/maciejmalecki/weather&lt;/a&gt;.&lt;/p&gt;</content><author><name>Maciej Małecki</name></author><summary type="html">The ESP 8266 has relatively high power consumption (around 70-80mA) which makes battery powered devices difficult to build, unless we accept a very short battery lifetime. Reasons for this are apparently connected with WiFi communication model, which is not especially economical, big processing power of the ESP chip itself has also an influence on this.</summary></entry><entry><title type="html">Internet of Things done cheaply with ESP 8266</title><link href="https://maciejmalecki.github.io/blog/esp8266" rel="alternate" type="text/html" title="Internet of Things done cheaply with ESP 8266" /><published>2020-09-11T00:00:00+00:00</published><updated>2020-09-11T00:00:00+00:00</updated><id>https://maciejmalecki.github.io/blog/esp8266</id><content type="html" xml:base="https://maciejmalecki.github.io/blog/esp8266">&lt;p&gt;For some time I had an idea to do few “home improvements” and, as a side effect, learn a bit about microcontrollers and electronics. So called “smart home” can be expensive - there are a lot of out-of-the-box solutions that cost a small fortune (as I said: “for some time”, now it is cheaper). So my idea really was: can I do it as cheap as possible?&lt;/p&gt;
 
 &lt;p&gt;After some research I decided to build my solution around some central software working on Raspberry Pi 3 and some amount of sensing- and command-nodes built with some cheap MCUs and radio transmitters, maybe even battery powered. My initial choice was to use AVR microcontrolers (yes, the ones from Arduino) and cheap NRF24L01 transceivers.&lt;/p&gt;
 

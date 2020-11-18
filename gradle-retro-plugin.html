@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113535243-1"></script>
+	<script>
+		var useCookies = (localStorage.getItem('useCookies') === 'true');
+		if (useCookies) {
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'UA-113535243-1', { 'anonymize_ip': true });
+		}
+	</script>
+	
+
+	<!-- Meta -->
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+	<meta name="generator" content="Jekyll">
+
+	<title>Gradle Retro Assembler plugin is released</title>
+  <meta name="description" content="End to end solution for assembling, building and testing your KickAssembler projects.">
+
+	<!-- CSS & fonts -->
+	<link rel="stylesheet" href="/blog/css/main.css">
+
+	<!-- RSS -->
+	<link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/png" href="img/favicon.png">
+
+</head>
+
+
+<body>
+	<div id="wrap">
+
+	  	<!-- Navigation -->
+	  	<nav id="nav">
+	<div id="nav-list">
+		<a href="/blog/">Home</a>
+
+		<!-- Nav pages -->
+	  
+	    
+	  
+	    
+	      <a href="/blog/about" title="About">About</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	      <a href="/blog/privacy" title="Privacy">Privacy</a>
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+	    
+	  
+    
+    <!-- Nav links -->
+	  <a href="https://github.com/maciejmalecki">Github</a>
+
+
+	</div>
+  
+  <!-- Nav footer -->
+	
+	  <footer>
+	
+	<span>version 1.0.0</span>
+
+</footer>
+	
+
+</nav>
+
+
+    <!-- Icon menu -->
+	  <a id="nav-menu">
+	  	<div id="menu"></div>
+	  </a>
+
+      <!-- Header -->
+      
+        <header id="header" class="parent justify-spaceBetween">
+  <div class="inner w100 relative">
+    <span class="f-left">  
+      <a href="/blog/">
+          <h1><code>()=>{}</code></h1>
+      </a>
+    </span>
+    <span id="nav-links" class="absolute right bottom">
+      <!-- Nav pages -->
+	    
+	      
+	    
+	      
+	        <a href="/blog/about" title="About">About</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	        <a href="/blog/privacy" title="Privacy">Privacy</a>
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+	      
+	    
+      
+      <!-- Nav links -->
+	    <a href="https://github.com/maciejmalecki">Github</a>
+
+
+    </span>
+  </div>
+</header>
+
+
+
+
+      
+
+    <!-- Main content -->
+	  <div id="container">
+
+		<main>
+
+			<article id="post-page">
+	<h2>Gradle Retro Assembler plugin is released</h2>		
+	<time datetime="2020-11-18T00:00:00+00:00" class="by-line">18 Nov 2020</time>
+	<div class="content">
+
+		<p>The idea of a tool that can automatically download all dependencies and build my 6502 projects
+arose some time <a href="assembler-libraries">ago</a>. In the meantime I started using 
+<a href="https://64bites.com/64spec/">64spec</a> for testing my assembly code. The library itself is great but requires a lot of manual
+operations once a great number of test files are created.</p>
+
+<p>I have noticed that Michał Taszycki, an author of <a href="https://64bites.com/64spec/">64spec</a>, has already written
+a proof of concept tool, so that 64spec can be used from command line rather than by using
+user interface of Vice. I have looked into <a href="https://github.com/64bites/64spec-cli/">64spec-cli</a> and decided that it would
+be possible to reimplement it in Java.</p>
+
+<p>The result of my work has actually exceeded my expectations: it’s a fully functional Gradle plugin
+written in Kotlin, which not only can assemble and test KickAssembler code, but also has a simple yet
+effective dependency management mechanism built in.</p>
+
+<h2 id="why-builds-should-be-automated">Why builds should be automated?</h2>
+<p>As a build we understand a process of compiling/assembling source code of a program into
+executable form. In the beginning of IT industry this was realized by some dedicated
+scripts written in <em>sh</em> or <em>bash</em>, and then quickly a tool called <em>make</em> was created. Simple
+command line <code class="highlighter-rouge">make</code> executed an “instruction” written as <em>makefile</em>.</p>
+
+<p>Then, in golden IDE era (90-ties and 2000-ties), a build process was connected with single key stroke - the 
+IDE was responsible for finding all the sources in the project and compile them into executable form.
+Automation capabilities derived from <em>make</em>-like tools were sort of forgotten.</p>
+
+<p>But then, again, the <em>Continuous Integration</em> (in short: CI) term became a buzzword. The idea was very simple: a 
+product should be build regularly (nightly or even after each repository push). The clear benefit
+out of it is that all potential integration problems with the software can be detected very
+early vs usually a night before deadline ;-) I don’t want to replicate descriptions already existing there so
+maybe go and get familiar with <a href="https://www.thoughtworks.com/continuous-integration">this Thoughtworks page</a> to see why CI is so important.</p>
+
+<p>So automation came back into the play, with dedicated software like CruiseControl, Hudson or Jenkins, and 
+most recently a cloud-based Travis-CI and CircleCI. And again, we needed build scripts and build tools.
+But this time we had a complete new generation of programming languages. In Java world we have Ant, Maven and
+recently Gradle.</p>
+
+<p>When I was back into 6502 assembly, I was especially lacking build tools. Of course I can use <em>make</em> to do
+virtually anything, but I was sort of used to minimalism of Maven - almost nothing needs to be defined in
+Maven build file to build standard Java project. I wanted something similar for KickAss.</p>
+
+<h2 id="why-gradle">Why Gradle?</h2>
+<p>I don’t like <em>make</em> because it is Unix-centric and I personally use both Linux and Windows based workstations.
+Of course I can force anybody to install CygWin so that they can build with <em>make</em> using Windows machines.
+Ant, which is great and portable, is also a bit old fashioned. It uses XML based syntax which does not
+look very nice and user friendly.</p>
+
+<p>Gradle is relative new but it is based on similar concept of tasks and it uses Groovy language to write
+build definition file. So it is not only more readable than XML, but it also give you freedom to script what you
+like including loops and ifs.</p>
+
+<h2 id="how-to-use-it">How to use it?</h2>
+<p>Complete usage instruction is available on <a href="assembler-libraries">GitHub</a>. The plugin as such is something that does not need to be
+separately downloaded or installed. It is a regular Gradle dependency that can be reached from <a href="https://plugins.gradle.org/plugin/com.github.c64lib.retro-assembler">plugins.gradle.org</a> 
+portal.</p>
+
+<h2 id="references">References</h2>
+<ul>
+  <li>[1] <a href="assembler-libraries">assembler-libraries</a></li>
+  <li>[2] <a href="https://64bites.com/64spec/">https://64bites.com/64spec/</a></li>
+  <li>[3] <a href="https://github.com/64bites/64spec-cli/">https://github.com/64bites/64spec-cli/</a></li>
+  <li>[4] <a href="https://www.thoughtworks.com/continuous-integration">https://www.thoughtworks.com/continuous-integration</a></li>
+  <li>[5] <a href="https://github.com/c64lib/gradle-retro-assembler-plugin">https://github.com/c64lib/gradle-retro-assembler-plugin</a></li>
+  <li>[6] <a href="https://plugins.gradle.org/plugin/com.github.c64lib.retro-assembler">https://plugins.gradle.org/plugin/com.github.c64lib.retro-assembler</a></li>
+</ul>
+
+
+		
+	</div>
+</article>
+
+
+
+	  </main>
+
+		  <!-- Pagination links -->
+      
+
+	  </div>
+
+	    <!-- Footer -->
+	    <footer><span>&#169;2018-2020 Maciej Małecki</span></footer>
+
+
+      <div id="gdpr" style="display: none;">
+        <p>
+          This web page uses cookies to track anonymous user activities. By continuing using this site
+          or by closing this banner you indicate your consent to use these cookies.
+          You can change settings, i.e. disable user tracking on <a href="privacy.html">privacy</a> page.
+        </p>
+        <button id="gdprClose">Close</button>
+      </div>
+
+	    <!-- Script -->
+      <script src="/blog/js/main.js"></script>	
+
+
+	</div>
+
+</body>
+</html>
