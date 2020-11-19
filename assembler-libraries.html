@@ -3,17 +3,6 @@
 
 <head>
 	
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113535243-1"></script>
-	<script>
-		var useCookies = (localStorage.getItem('useCookies') === 'true');
-		if (useCookies) {
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
-			gtag('config', 'UA-113535243-1', { 'anonymize_ip': true });
-		}
-	</script>
-	
 
 	<!-- Meta -->
 	<meta charset="UTF-8"/>
@@ -59,10 +48,6 @@
 	  
 	    
 	      <a href="/blog/privacy" title="Privacy">Privacy</a>
-	    
-	  
-	    
-	  
 	    
 	  
 	    
@@ -119,10 +104,6 @@
 	    
 	      
 	        <a href="/blog/privacy" title="Privacy">Privacy</a>
-	      
-	    
-	      
-	    
 	      
 	    
 	      
@@ -192,7 +173,7 @@
 
 <p>Let’s assume we have following code in our library:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.macro inc16(destination) {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.macro inc16(destination) {
   inc destination
   bne !+
   inc destination + 1
@@ -200,7 +181,7 @@
 }
 </code></pre></div></div>
 
-<p>It increments 16 bit number placed in memory in two memory cells: <code class="highlighter-rouge">destination</code> and <code class="highlighter-rouge">destination+1</code> (little endian). Every time it is used it will be exchanged with 3 instructions weighting 8 bytes in total. Of course we can use such “library call” many times, each time we’re adding 8 bytes to total length of our code.</p>
+<p>It increments 16 bit number placed in memory in two memory cells: <code class="language-plaintext highlighter-rouge">destination</code> and <code class="language-plaintext highlighter-rouge">destination+1</code> (little endian). Every time it is used it will be exchanged with 3 instructions weighting 8 bytes in total. Of course we can use such “library call” many times, each time we’re adding 8 bytes to total length of our code.</p>
 
 <p>There are two more useful types of items we can declare in our library.</p>
 
@@ -208,20 +189,20 @@
 
 <p>Lets’s consider following function:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.function getTextMemory(screenMem, charSet) {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.function getTextMemory(screenMem, charSet) {
   .return charSet&lt;&lt;1 | screenMem&lt;&lt;4
 }
 </code></pre></div></div>
 
-<p>What it does it takes screenMemory slot and charsetSlot and combines it together to get value that can be then stored in <code class="highlighter-rouge">$D018</code> register of VIC-II. This can be used for every 3 text modes of C64. This is how we can use it in code:</p>
+<p>What it does it takes screenMemory slot and charsetSlot and combines it together to get value that can be then stored in <code class="language-plaintext highlighter-rouge">$D018</code> register of VIC-II. This can be used for every 3 text modes of C64. This is how we can use it in code:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lda #getTextMemory(1, 4)
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lda #getTextMemory(1, 4)
 sta MEMORY_CONTROL
 </code></pre></div></div>
 
 <p>Or we can even wrap it into library macro:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.macro configureTextMemory(screenMem, charSet) {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.macro configureTextMemory(screenMem, charSet) {
   lda #getTextMemory(screenMem, charSet)
   sta MEMORY_CONTROL
 }
@@ -229,14 +210,14 @@ sta MEMORY_CONTROL
 
 <p>and then use in code like this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>configureTextMemory(1, 4)
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>configureTextMemory(1, 4)
 </code></pre></div></div>
 
-<p>Last useful item is label. Labels can be used to define constants that can be then reused in different part of library, other libraries or programs. It is definitely easier to read <code class="highlighter-rouge">sta MEMORY_CONTROL</code> instead of <code class="highlighter-rouge">sta $D017</code>, isn’t it?</p>
+<p>Last useful item is label. Labels can be used to define constants that can be then reused in different part of library, other libraries or programs. It is definitely easier to read <code class="language-plaintext highlighter-rouge">sta MEMORY_CONTROL</code> instead of <code class="language-plaintext highlighter-rouge">sta $D017</code>, isn’t it?</p>
 
 <p>Here’s example: a beginning of declaration for all VIC-II registers:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/* ------------------------------------
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/* ------------------------------------
  * VIC-II registers.
  * ------------------------------------ */
 .label VIC2                 = $D000 
@@ -250,24 +231,24 @@ sta MEMORY_CONTROL
 <h2 id="how-can-we-write-libraries-in-assembly">How can we write libraries in assembly?</h2>
 <p>There are three features of <a href="http://www.theweb.dk/KickAssembler/Main.html">KickAssembler</a> that are handy here:</p>
 <ul>
-  <li>The <code class="highlighter-rouge">#import</code> directive that includes specified <code class="highlighter-rouge">asm</code> file into source code.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">#import</code> directive that includes specified <code class="language-plaintext highlighter-rouge">asm</code> file into source code.</li>
   <li>The namespace feature that allows to isolate objects of library so that they don’t clash with identically named objects of another library.</li>
-  <li>The <code class="highlighter-rouge">-libdir</code> parameter that allows to specify additional directory where <a href="http://www.theweb.dk/KickAssembler/Main.html">KickAssembler</a> will look for files to import, so we can keep our libraries checked out in separate folder.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">-libdir</code> parameter that allows to specify additional directory where <a href="http://www.theweb.dk/KickAssembler/Main.html">KickAssembler</a> will look for files to import, so we can keep our libraries checked out in separate folder.</li>
 </ul>
 
 <p>Lets look at trivial example: a common library without any additional dependencies: <a href="https://github.com/c64lib/common">https://github.com/c64lib/common</a>. It consists of several files:</p>
 <ul>
-  <li><code class="highlighter-rouge">.gitignore</code> - these are several build artifacts of KickAssembler that should never be stored in GIT such as <code class="highlighter-rouge">*.prg</code> and <code class="highlighter-rouge">*.sym</code> files but also a <code class="highlighter-rouge">.cbm</code> directory (I will explain that later).</li>
-  <li><code class="highlighter-rouge">.travis.yml</code> - config file for <a href="https://travis-ci.org">TravisCI</a> - also to be described later.</li>
-  <li><code class="highlighter-rouge">LICENSE</code>, <code class="highlighter-rouge">README.md</code> - speak for themselves.</li>
-  <li><code class="highlighter-rouge">common.asm</code>, <code class="highlighter-rouge">mem.asm</code> - library files</li>
+  <li><code class="language-plaintext highlighter-rouge">.gitignore</code> - these are several build artifacts of KickAssembler that should never be stored in GIT such as <code class="language-plaintext highlighter-rouge">*.prg</code> and <code class="language-plaintext highlighter-rouge">*.sym</code> files but also a <code class="language-plaintext highlighter-rouge">.cbm</code> directory (I will explain that later).</li>
+  <li><code class="language-plaintext highlighter-rouge">.travis.yml</code> - config file for <a href="https://travis-ci.org">TravisCI</a> - also to be described later.</li>
+  <li><code class="language-plaintext highlighter-rouge">LICENSE</code>, <code class="language-plaintext highlighter-rouge">README.md</code> - speak for themselves.</li>
+  <li><code class="language-plaintext highlighter-rouge">common.asm</code>, <code class="language-plaintext highlighter-rouge">mem.asm</code> - library files</li>
 </ul>
 
 <p>First thing that we see is that it is actually possible to keep several library (asm) files in single ‘library’ module. Splitting code into few smaller files is always good as long as separation is semantically consistent and reasonable.</p>
 
-<p>Take a look into <code class="highlighter-rouge">common.asm</code> - it is really trivial and short:</p>
+<p>Take a look into <code class="language-plaintext highlighter-rouge">common.asm</code> - it is really trivial and short:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#importonce
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#importonce
 .filenamespace c64lib
 
 /*
@@ -284,9 +265,9 @@ sta MEMORY_CONTROL
 .assert "neg(%10101010) gives %01010101", neg(%10101010), %01010101
 </code></pre></div></div>
 
-<p>What is important is header: <code class="highlighter-rouge">#importonce</code> says that such file should be imported only once no matter how many times this particular library file is used by all other libraries and files used to assembly our project.</p>
+<p>What is important is header: <code class="language-plaintext highlighter-rouge">#importonce</code> says that such file should be imported only once no matter how many times this particular library file is used by all other libraries and files used to assembly our project.</p>
 
-<p>Then I declare a namespace: <code class="highlighter-rouge">c64lib</code>. I decided to use single namespace for all my libraries because of the namespace problem I have discovered (described in details later). Having separate namespace per library will force me to declare all items ‘public’ which I wanted to avoid.</p>
+<p>Then I declare a namespace: <code class="language-plaintext highlighter-rouge">c64lib</code>. I decided to use single namespace for all my libraries because of the namespace problem I have discovered (described in details later). Having separate namespace per library will force me to declare all items ‘public’ which I wanted to avoid.</p>
 
 <p>Then we have function documentation (quite important for libraries) - this is logical negation function, by some reason such function is not available in <a href="http://www.theweb.dk/KickAssembler/Main.html">KickAssembler</a> out of the box.</p>
 
@@ -295,11 +276,11 @@ sta MEMORY_CONTROL
 <h2 id="small-problems">Small problems</h2>
 <p>Sadly there are few shortcommings of <a href="http://www.theweb.dk/KickAssembler/Main.html">KickAssembler</a> as for now (version 4.x), which make things a little bit more complicated.</p>
 
-<p>Firstly, it is not possible to specify more than one diectory with <code class="highlighter-rouge">-libdir</code> switch. This is quite easy to workaround - either we need to checkout all libraries into single, common directory, or we can keep it separated and than assemble it into ‘virtual folder’ using symbolic links.</p>
+<p>Firstly, it is not possible to specify more than one diectory with <code class="language-plaintext highlighter-rouge">-libdir</code> switch. This is quite easy to workaround - either we need to checkout all libraries into single, common directory, or we can keep it separated and than assemble it into ‘virtual folder’ using symbolic links.</p>
 
 <p>Second problem is unfortunately more problematic. The namespace feature is great, as it allows to group labels, macros and functions. But macros and functions are not visible from outside of that particular namespace. So, when you write following code:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.namespace c64lib {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.namespace c64lib {
   .label VIC2 = $D000 
   .label MEMORY_CONTROL = VIC2 + $18
   .label TEXT_SCREEN_WIDTH = 40
@@ -315,25 +296,25 @@ sta MEMORY_CONTROL
 }
 </code></pre></div></div>
 
-<p>you can then access label inside of the <code class="highlighter-rouge">c64lib</code> namespace:</p>
+<p>you can then access label inside of the <code class="language-plaintext highlighter-rouge">c64lib</code> namespace:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sta MEMORY_CONTROL
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sta MEMORY_CONTROL
 </code></pre></div></div>
 
-<p>but you cannot call <code class="highlighter-rouge">getTextOffset</code> or <code class="highlighter-rouge">configureTextMemory</code>, because function and macro names are not accessible from outside. User manual of KickAssembler says that this is ‘current state’, so there is a change this will be changed in one of future releases.</p>
+<p>but you cannot call <code class="language-plaintext highlighter-rouge">getTextOffset</code> or <code class="language-plaintext highlighter-rouge">configureTextMemory</code>, because function and macro names are not accessible from outside. User manual of KickAssembler says that this is ‘current state’, so there is a change this will be changed in one of future releases.</p>
 
-<p>To overcome this limitation, we have to prepend function and macro name with <code class="highlighter-rouge">@</code> during its declaration which automatically places them in root namespace. In this way we can access it without prepending it with any namespace name, but as it becomes global, it can clash with other names easily. So there are pros and cons.</p>
+<p>To overcome this limitation, we have to prepend function and macro name with <code class="language-plaintext highlighter-rouge">@</code> during its declaration which automatically places them in root namespace. In this way we can access it without prepending it with any namespace name, but as it becomes global, it can clash with other names easily. So there are pros and cons.</p>
 
-<p>What is good, is that we actually have two kind of objects: public (prepended with <code class="highlighter-rouge">@</code>) and private objects (hidden inside namespace) - we can then define public API of our library and keep the rest as freely modifiable private elements.</p>
+<p>What is good, is that we actually have two kind of objects: public (prepended with <code class="language-plaintext highlighter-rouge">@</code>) and private objects (hidden inside namespace) - we can then define public API of our library and keep the rest as freely modifiable private elements.</p>
 
 <h2 id="how-to-use-library-in-another-library">How to use library (in another library)</h2>
 <p>Assuming you have checked out a library into some common library directory of your choice, using it in your code is relatively simple. Look at my directory structure where I have checked out my libraries:</p>
 
 <p><img src="https://maciejmalecki.github.io/blog/cbm/img/travis-ci/library-directory.png" alt="Content of lib dir" /></p>
 
-<p>When using KickAssembler from command line you use <code class="highlighter-rouge">-libdir</code> parameter to specify <code class="highlighter-rouge">c64lib</code> directory location (in my case) and you can write your source code like this:</p>
+<p>When using KickAssembler from command line you use <code class="language-plaintext highlighter-rouge">-libdir</code> parameter to specify <code class="language-plaintext highlighter-rouge">c64lib</code> directory location (in my case) and you can write your source code like this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#import "chipset/vic2.asm"
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#import "chipset/vic2.asm"
 #import "chipset/sprites.asm"
 #import "chipset/cia.asm"
 #import "common/mem.asm"
@@ -362,9 +343,9 @@ initialize: {
 }
 </code></pre></div></div>
 
-<p>You see: because inside <code class="highlighter-rouge">c64lib</code> dir you have <code class="highlighter-rouge">chipset</code> and <code class="highlighter-rouge">common</code> checked out, and inside you have <code class="highlighter-rouge">vic2.asm</code>, <code class="highlighter-rouge">sprites.asm</code>, <code class="highlighter-rouge">cia.asm</code> and <code class="highlighter-rouge">mem.asm</code> respectively, all works perfectly (KickAssembler will find these files to include them). All you need to do is to launch it in following way:</p>
+<p>You see: because inside <code class="language-plaintext highlighter-rouge">c64lib</code> dir you have <code class="language-plaintext highlighter-rouge">chipset</code> and <code class="language-plaintext highlighter-rouge">common</code> checked out, and inside you have <code class="language-plaintext highlighter-rouge">vic2.asm</code>, <code class="language-plaintext highlighter-rouge">sprites.asm</code>, <code class="language-plaintext highlighter-rouge">cia.asm</code> and <code class="language-plaintext highlighter-rouge">mem.asm</code> respectively, all works perfectly (KickAssembler will find these files to include them). All you need to do is to launch it in following way:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>java -jar KickAss.jar -libdir c:\c\c64lib test.asm
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>java -jar KickAss.jar -libdir c:\c\c64lib test.asm
 </code></pre></div></div>
 
 <p>If you use IDE such as <a href="http://www.popelganda.de/relaunch64.html">Relaunch64</a>, you must customize Compile &amp; Run Scripts in following way:</p>
@@ -372,15 +353,15 @@ initialize: {
 <p><img src="https://maciejmalecki.github.io/blog/cbm/img/travis-ci/relaunch64.png" alt="How to customize Relaunch64" /></p>
 
 <h2 id="bring-some-automation-with-travis-ci">Bring some automation with Travis CI</h2>
-<p>Interesting part starts actually here. <a href="https://travis-ci.org">TravisCI</a> is a CI environment that is very well integrated with <a href="https://github.com">GitHub</a>. It is also free for public repositories, so as long as we’re doing Open Source, we don’t have to invest - cool. Once you integrate Travis with your GIT repository, it will start watching for pushes (on any branch, pull request, tag, etc). When new push is detected, it scans your repository for <code class="highlighter-rouge">.travis.yml</code> configuration file and according to what’s inside provides your own temporary little linux machine on which you can actually do anything. Most likely you do a build of your software, you can even launch it and test it if you wish.</p>
+<p>Interesting part starts actually here. <a href="https://travis-ci.org">TravisCI</a> is a CI environment that is very well integrated with <a href="https://github.com">GitHub</a>. It is also free for public repositories, so as long as we’re doing Open Source, we don’t have to invest - cool. Once you integrate Travis with your GIT repository, it will start watching for pushes (on any branch, pull request, tag, etc). When new push is detected, it scans your repository for <code class="language-plaintext highlighter-rouge">.travis.yml</code> configuration file and according to what’s inside provides your own temporary little linux machine on which you can actually do anything. Most likely you do a build of your software, you can even launch it and test it if you wish.</p>
 
-<p>Travis comes with plenty of predefined environments so that you can easily build Java/Maven projects, Ruby, Python, C++ and so on. Surprisingly, there is no environment for KickAssembler available (ha ha ha). Then I actually found, that it is not so easy to provide one, because KickAssembler is a Java application and JVM is available on any Travis environment out of the box! All we need to do is to download KickAssembler at the beginning of our builds and then just use it to build any <code class="highlighter-rouge">asm</code> file you wish.</p>
+<p>Travis comes with plenty of predefined environments so that you can easily build Java/Maven projects, Ruby, Python, C++ and so on. Surprisingly, there is no environment for KickAssembler available (ha ha ha). Then I actually found, that it is not so easy to provide one, because KickAssembler is a Java application and JVM is available on any Travis environment out of the box! All we need to do is to download KickAssembler at the beginning of our builds and then just use it to build any <code class="language-plaintext highlighter-rouge">asm</code> file you wish.</p>
 
 <p>I have encapsulated this functionality in separate GIT hub repo:</p>
 
 <p><a href="https://github.com/c64lib/travis-ci">https://github.com/c64lib/travis-ci</a></p>
 
-<p>There is actually some documentation provided how to use (see README). What is important, to use this functionality you must provide <code class="highlighter-rouge">.travis.yml</code> file with similar content:</p>
+<p>There is actually some documentation provided how to use (see README). What is important, to use this functionality you must provide <code class="language-plaintext highlighter-rouge">.travis.yml</code> file with similar content:</p>
 
 <div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">language</span><span class="pi">:</span> <span class="s">asm</span>
 <span class="na">sudo</span><span class="pi">:</span> <span class="no">false</span>
@@ -399,22 +380,22 @@ initialize: {
 <p>First important line is this one:</p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source</span> &lt;<span class="o">(</span>curl <span class="nt">-SLs</span> https://raw.githubusercontent.com/c64lib/travis-ci/master/install.sh<span class="o">)</span>
 </code></pre></div></div>
-<p>It downloads <code class="highlighter-rouge">install.sh</code> script from repo and sources it (it means it will be immediately executed inside Travis CI environment). What this script does, it download KickAssembler binaries and provides your scripting environment with two further commands: <code class="highlighter-rouge">cpm</code> and <code class="highlighter-rouge">ka</code>.</p>
+<p>It downloads <code class="language-plaintext highlighter-rouge">install.sh</code> script from repo and sources it (it means it will be immediately executed inside Travis CI environment). What this script does, it download KickAssembler binaries and provides your scripting environment with two further commands: <code class="language-plaintext highlighter-rouge">cpm</code> and <code class="language-plaintext highlighter-rouge">ka</code>.</p>
 
-<p>The <code class="highlighter-rouge">ka</code> command is just a wrapper for KickAssembler (who wants to type <code class="highlighter-rouge">java -jar KickAss.jar</code> …?) - you now just type <code class="highlighter-rouge">ka</code> and pass all valid KickAssembler parameters to it.</p>
+<p>The <code class="language-plaintext highlighter-rouge">ka</code> command is just a wrapper for KickAssembler (who wants to type <code class="language-plaintext highlighter-rouge">java -jar KickAss.jar</code> …?) - you now just type <code class="language-plaintext highlighter-rouge">ka</code> and pass all valid KickAssembler parameters to it.</p>
 
-<p>The <code class="highlighter-rouge">cpm</code> command is a very simple tool for managing dependencies. It actually very limited - what it does now, it download specified library from GitHub, unzip it and places in hidden <code class="highlighter-rouge">.cpm_modules</code> directory (JavaScript and NodeJS people already know what is going on;-). Actually it is so limited (I wrote it and tested in 15 minutes), that you must provide it with library name manually, see:</p>
+<p>The <code class="language-plaintext highlighter-rouge">cpm</code> command is a very simple tool for managing dependencies. It actually very limited - what it does now, it download specified library from GitHub, unzip it and places in hidden <code class="language-plaintext highlighter-rouge">.cpm_modules</code> directory (JavaScript and NodeJS people already know what is going on;-). Actually it is so limited (I wrote it and tested in 15 minutes), that you must provide it with library name manually, see:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  - cpm chipset https://github.com/c64lib/chipset/archive/develop.tar.gz
 </code></pre></div></div>
-<p>(this one downloads content of <code class="highlighter-rouge">develop</code> branch of <code class="highlighter-rouge">chipset</code> library and unzips it under <code class="highlighter-rouge">.cpm_modules\chipset</code>).</p>
+<p>(this one downloads content of <code class="language-plaintext highlighter-rouge">develop</code> branch of <code class="language-plaintext highlighter-rouge">chipset</code> library and unzips it under <code class="language-plaintext highlighter-rouge">.cpm_modules\chipset</code>).</p>
 
 <p>Because now we are always launching kick assembler in following way:</p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  - ka <span class="nt">-libdir</span> cpm_modules test.asm
 </code></pre></div></div>
 <p>you can reference a library with following import:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#import "chipset/vic2.asm"
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#import "chipset/vic2.asm"
 </code></pre></div></div>
 
 <p>Still, because this facility is very limited, it is useful only for remote builds (CI) on TravisCI. However, I plan to enhance it to be a CLI interface for development environment. But for this you have to wait a while.</p>

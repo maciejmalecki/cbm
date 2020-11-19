@@ -3,17 +3,6 @@
 
 <head>
 	
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113535243-1"></script>
-	<script>
-		var useCookies = (localStorage.getItem('useCookies') === 'true');
-		if (useCookies) {
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
-			gtag('config', 'UA-113535243-1', { 'anonymize_ip': true });
-		}
-	</script>
-	
 
 	<!-- Meta -->
 	<meta charset="UTF-8"/>
@@ -59,10 +48,6 @@
 	  
 	    
 	      <a href="/blog/privacy" title="Privacy">Privacy</a>
-	    
-	  
-	    
-	  
 	    
 	  
 	    
@@ -125,10 +110,6 @@
 	    
 	      
 	    
-	      
-	    
-	      
-	    
       
       <!-- Nav links -->
 	    <a href="https://github.com/maciejmalecki">Github</a>
@@ -155,9 +136,9 @@
 
 		<p>Subroutine is an essential concept in programming. Advantages of using subroutines are quite clear - instead of doing a repetitive work, we define chunk of code once and “jump” to it any time we need it. It is a part of DRY principle (do not repeat yourself), which allows to keep our code compact and maintainable. It allows us to keep memory footprint of our code at reasonable level. With possibility of passing execution arguments as well as result, subroutines become fully blown procedures and functions as known from high level languages.</p>
 
-<p>How does MOS 6502 support subroutines? We essentially need two instructions: “<strong>J</strong>ump to <strong>S</strong>ub<strong>R</strong>outine” that does typical long jump to given memory address and “<strong>R</strong>e<strong>T</strong>urn from <strong>S</strong>ubroutine” that returns to the address pointing to the next instruction after “jump”. These instructions are named <code class="highlighter-rouge">JSR</code> and <code class="highlighter-rouge">RTS</code>, respectively. <code class="highlighter-rouge">JSR</code> does actually more than simple <code class="highlighter-rouge">JMP</code> - it pushes return address to the stack (MOS 6502 uses memory page 1 for stack: addresses from <code class="highlighter-rouge">$100</code> to <code class="highlighter-rouge">$1FF</code>). <code class="highlighter-rouge">RTS</code> pulls return address from stack and stores it as program counter (PC).</p>
+<p>How does MOS 6502 support subroutines? We essentially need two instructions: “<strong>J</strong>ump to <strong>S</strong>ub<strong>R</strong>outine” that does typical long jump to given memory address and “<strong>R</strong>e<strong>T</strong>urn from <strong>S</strong>ubroutine” that returns to the address pointing to the next instruction after “jump”. These instructions are named <code class="language-plaintext highlighter-rouge">JSR</code> and <code class="language-plaintext highlighter-rouge">RTS</code>, respectively. <code class="language-plaintext highlighter-rouge">JSR</code> does actually more than simple <code class="language-plaintext highlighter-rouge">JMP</code> - it pushes return address to the stack (MOS 6502 uses memory page 1 for stack: addresses from <code class="language-plaintext highlighter-rouge">$100</code> to <code class="language-plaintext highlighter-rouge">$1FF</code>). <code class="language-plaintext highlighter-rouge">RTS</code> pulls return address from stack and stores it as program counter (PC).</p>
 
-<p>For all of you my readers who like to be very accurate, the address stored by <code class="highlighter-rouge">JSR</code> is decremented by 1, <code class="highlighter-rouge">RTS</code> does increment it back by 1. I don’t even want to know why, I bet somebody wanted to make some savings on transistor count, it’s just my quess…</p>
+<p>For all of you my readers who like to be very accurate, the address stored by <code class="language-plaintext highlighter-rouge">JSR</code> is decremented by 1, <code class="language-plaintext highlighter-rouge">RTS</code> does increment it back by 1. I don’t even want to know why, I bet somebody wanted to make some savings on transistor count, it’s just my quess…</p>
 
 <h2 id="communicating-with-subroutines---parameters">Communicating with subroutines - parameters</h2>
 <p>In 6502 machine code there are at least three commonly used methods for passing parameters to the subroutine:</p>
@@ -167,16 +148,16 @@
   <li>Using stack.</li>
 </ol>
 
-<p>Using CPU registers is the simplest possible way of communication. Assuming that registers are used wisely, we may get CPU registers already properly loaded with values which speeds up execution and can be essential in some time critical cases. There is however one downside of this method directly connected with very simplistic design of 6502: there are only 3 registers that can be easily used (<code class="highlighter-rouge">A</code>, <code class="highlighter-rouge">X</code> and <code class="highlighter-rouge">Y</code>) each only 1 byte in size - not much indeed.</p>
+<p>Using CPU registers is the simplest possible way of communication. Assuming that registers are used wisely, we may get CPU registers already properly loaded with values which speeds up execution and can be essential in some time critical cases. There is however one downside of this method directly connected with very simplistic design of 6502: there are only 3 registers that can be easily used (<code class="language-plaintext highlighter-rouge">A</code>, <code class="language-plaintext highlighter-rouge">X</code> and <code class="language-plaintext highlighter-rouge">Y</code>) each only 1 byte in size - not much indeed.</p>
 
 <p>Fixed memory location for exchanging parameters is fine unless you write libraries of code. With library code we cannot assume that certain memory locations can be used by our subroutines, because there is no way to predict what would be memory layout of the client program.</p>
 
-<p>Finally there is a stack, that is 256 bytes of memory located in already mentioned page 1. Stack is a data structure with very limited API, that is we can push value there or pull value from there, there is a stack pointer that indicates where new value will be pushed or pulled that is incremented or decremented automatically with <code class="highlighter-rouge">PLA</code>/<code class="highlighter-rouge">PHA</code> instruction executions. We can put our parameters on the stack right before <code class="highlighter-rouge">JSR</code> is executed and then use it inside of our subroutine.</p>
+<p>Finally there is a stack, that is 256 bytes of memory located in already mentioned page 1. Stack is a data structure with very limited API, that is we can push value there or pull value from there, there is a stack pointer that indicates where new value will be pushed or pulled that is incremented or decremented automatically with <code class="language-plaintext highlighter-rouge">PLA</code>/<code class="language-plaintext highlighter-rouge">PHA</code> instruction executions. We can put our parameters on the stack right before <code class="language-plaintext highlighter-rouge">JSR</code> is executed and then use it inside of our subroutine.</p>
 
 <p>In next chapters I will describe latter two methods as the most promising for our purposes. Communication with CPU registers as the most straightforward method can also be used, if only amount of data needed in communication is limited.</p>
 
 <h2 id="hosted-subroutines">Hosted subroutines</h2>
-<p>As it has been already mentioned in my <a href="assembler-libraries">library post</a>, libraries in KickAssembler can be realized with <code class="highlighter-rouge">#import</code> macro by importing source file of library into client code. Anything that is not a macro, label or function, which means any ‘free floating’ pieces of code or data prepended with memory directives will get its own memory segment and will be assembled together with client code. There is no special control over this process, at least I don’t know about any. That is a problem because any piece of code will immediately steal some memory during assembling no matter you’re going to use it or not. This will lead us to the design, where each subroutine has its own source file which does not seem to be reasonable nor convenient.</p>
+<p>As it has been already mentioned in my <a href="assembler-libraries">library post</a>, libraries in KickAssembler can be realized with <code class="language-plaintext highlighter-rouge">#import</code> macro by importing source file of library into client code. Anything that is not a macro, label or function, which means any ‘free floating’ pieces of code or data prepended with memory directives will get its own memory segment and will be assembled together with client code. There is no special control over this process, at least I don’t know about any. That is a problem because any piece of code will immediately steal some memory during assembling no matter you’re going to use it or not. This will lead us to the design, where each subroutine has its own source file which does not seem to be reasonable nor convenient.</p>
 
 <p>But wait, macros are KickAssembler entities that are not automatically resolved into a code! They must be called first. They can be called many times and this is something, we frequently do with short macros. With long macros (and subroutine macros can be potentially very lenghty) it might be no so good idea because we will waste so much memory.</p>
 
@@ -186,34 +167,34 @@
 
 <p>Let’s consider following example:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.macro add8(left, right) {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.macro add8(left, right) {
     lda #left
     adc #right
 }
 </code></pre></div></div>
 
-<p>This macro, when used loads accumulator with value <code class="highlighter-rouge">left</code>, adds value <code class="highlighter-rouge">right</code> to it and leaves result in accumulator. One may think “cool, that’s useful”. But in reality it is not. We get “subroutine” that takes two parameters, but values of these parameters must be calculated during assembling process. No way to pass accumulator values, or memory values or anything calculated. All we can do is to:</p>
+<p>This macro, when used loads accumulator with value <code class="language-plaintext highlighter-rouge">left</code>, adds value <code class="language-plaintext highlighter-rouge">right</code> to it and leaves result in accumulator. One may think “cool, that’s useful”. But in reality it is not. We get “subroutine” that takes two parameters, but values of these parameters must be calculated during assembling process. No way to pass accumulator values, or memory values or anything calculated. All we can do is to:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>add8(2, 2)
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>add8(2, 2)
 </code></pre></div></div>
 
-<p>and get <code class="highlighter-rouge">4</code> in accumulator.</p>
+<p>and get <code class="language-plaintext highlighter-rouge">4</code> in accumulator.</p>
 
 <h2 id="make-global-variable-communication-useful">Make global variable communication useful</h2>
 <p>As it was already mentioned, biggest challenge with communicating using memory location is that this location must be somehow fixed. This theoretically disqualifies such method for librarian subroutines. But what if such memory location is made configurable?</p>
 
 <p>Let’s consider our trivial example once more, this time we will write macro based subroutine that takes values from two memory locations, adds them together and leaves result in accumulator:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.macro add8Mem(leftPtr, rightPtr) {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.macro add8Mem(leftPtr, rightPtr) {
     lda leftPtr
     adc rightPtr
     rts
 }
 </code></pre></div></div>
 
-<p>Assuming that we have encapsulated this macro in library, namely <code class="highlighter-rouge">math.asm</code>, we can now write following “client” program:</p>
+<p>Assuming that we have encapsulated this macro in library, namely <code class="language-plaintext highlighter-rouge">math.asm</code>, we can now write following “client” program:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#include "math.asm"
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#include "math.asm"
 
 *=$0801 "Basic upstart"
 BasicUpstart(start)
@@ -236,9 +217,9 @@ add8Mem:        // under this address we install our subroutine
 
 <p>Here we did several things:</p>
 <ul>
-  <li>We have installed our subroutine using library macro under address of choice (here indicated by <code class="highlighter-rouge">add8Mem</code> address (I’m going to use label name that follows macro name, but it does not need to go like this).</li>
+  <li>We have installed our subroutine using library macro under address of choice (here indicated by <code class="language-plaintext highlighter-rouge">add8Mem</code> address (I’m going to use label name that follows macro name, but it does not need to go like this).</li>
   <li>We have configured this subroutine to use addresses of choice for parameter placeholders (we did it using macro parameters).</li>
-  <li>We can use subroutine with simple <code class="highlighter-rouge">JSR</code>, all we need to do is to load placeholders with data first.</li>
+  <li>We can use subroutine with simple <code class="language-plaintext highlighter-rouge">JSR</code>, all we need to do is to load placeholders with data first.</li>
 </ul>
 
 <p>Subroutine, once installed, can be called many times, from different places of code - it will work just fine.</p>
@@ -248,11 +229,11 @@ add8Mem:        // under this address we install our subroutine
 <h2 id="using-stack">Using stack</h2>
 <p>Stack in MOS 6502 is just a regular place in memory. CPU has three additional components that handles stack in convenient and fast way: it is stack pointer register (SP) and families of push and pull instructions that can transfer data from and to CPU registers. When we use stack for subroutine parameters, it is particularily convenient, because we don’t need to care which exact memory cells should we use for this purpose. Just free place on stack will be used. Moreover, this method of communication supports nesting of subroutine calls, and with particularily clever design it may even handle recursive calls.</p>
 
-<p>Lets consider <code class="highlighter-rouge">add8</code> subroutine hosted by a macro (similar to <code class="highlighter-rouge">add8Mem</code> from above) but using stack as communication method. First we have to deal with return address. It is very important to preserve it, because without correctly defined return address our CPU will get jammed as soon as <code class="highlighter-rouge">RTS</code> is called.</p>
+<p>Lets consider <code class="language-plaintext highlighter-rouge">add8</code> subroutine hosted by a macro (similar to <code class="language-plaintext highlighter-rouge">add8Mem</code> from above) but using stack as communication method. First we have to deal with return address. It is very important to preserve it, because without correctly defined return address our CPU will get jammed as soon as <code class="language-plaintext highlighter-rouge">RTS</code> is called.</p>
 
-<p>Return address is pushed to the stack once <code class="highlighter-rouge">JSR</code> is called and taken back when <code class="highlighter-rouge">RTS</code> is called. We are going to push our parameters to the stack just before <code class="highlighter-rouge">JSR</code>, so at the beginning of our subroutine we must pull this address and store somewhere else before accessing our parameters.</p>
+<p>Return address is pushed to the stack once <code class="language-plaintext highlighter-rouge">JSR</code> is called and taken back when <code class="language-plaintext highlighter-rouge">RTS</code> is called. We are going to push our parameters to the stack just before <code class="language-plaintext highlighter-rouge">JSR</code>, so at the beginning of our subroutine we must pull this address and store somewhere else before accessing our parameters.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.macro add8() {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.macro add8() {
     // pull return address and store in placeholder
     pla; sta returnPtr
     pla; sta returnPtr + 1
@@ -281,7 +262,7 @@ add8Mem:        // under this address we install our subroutine
 
 <p>Our program that utilizes following hosted subroutine can look like this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#include "math.asm"
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#include "math.asm"
 
 *=$0801 "Basic upstart"
 BasicUpstart(start)
@@ -303,7 +284,7 @@ add8:           // under this address we install our subroutine
 
 <p>It is actually plenty of coding. We can simplify this with bunch of KickAssembler macros. This time we will utilize macros as they should be utilized - to replace short, repetitive pieces of code.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.macro @invokeStackBegin(placeholderPtr) {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.macro @invokeStackBegin(placeholderPtr) {
     pla
     sta placeholderPtr
     pla
@@ -330,7 +311,7 @@ add8:           // under this address we install our subroutine
 
 <p>With these macros we can code our macro hosted subroutine in simpler manner (please appreciate the beauty of this self modifying code):</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.macro add8() {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.macro add8() {
     invokeStackBegin(returnPtr)
     pullParamB(rightPtr + 1)
     pullParamB(leftPtr + 1)
@@ -351,7 +332,7 @@ add8:           // under this address we install our subroutine
 
 <p>and calling code can look like this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>start:
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>start:
     pushParamB(2)
     pushParamB(4)
     jsr add8    // call subroutine that will adds values that are stored on the stack
@@ -363,7 +344,7 @@ add8:           // under this address we install our subroutine
     add8()
 </code></pre></div></div>
 
-<p>Helper macros for implementing stack based subroutines are available as KickAssembler library as a part of c64lib. You must include <code class="highlighter-rouge">invoke.asm</code> from common repository (https://github.com/c64lib/common).</p>
+<p>Helper macros for implementing stack based subroutines are available as KickAssembler library as a part of c64lib. You must include <code class="language-plaintext highlighter-rouge">invoke.asm</code> from common repository (https://github.com/c64lib/common).</p>
 
 <h2 id="summary">Summary</h2>
 <p>We just saw how subroutines can be effectively implemented as part of libraries. With this approach they can be easily installed into target code and reused by many programs. We’ve learnt also how can we pass parameters to the subroutines. With a little help from self modifying code and some macros from c64lib common library we can write compact code that communicates via stack. I will post some more complex examples in subsequent posts, including indirect subroutine parameters.</p>

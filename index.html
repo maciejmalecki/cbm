@@ -3,17 +3,6 @@
 
 <head>
 	
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113535243-1"></script>
-	<script>
-		var useCookies = (localStorage.getItem('useCookies') === 'true');
-		if (useCookies) {
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
-			gtag('config', 'UA-113535243-1', { 'anonymize_ip': true });
-		}
-	</script>
-	
 
 	<!-- Meta -->
 	<meta charset="UTF-8"/>
@@ -59,10 +48,6 @@
 	  
 	    
 	      <a href="/blog/privacy" title="Privacy">Privacy</a>
-	    
-	  
-	    
-	  
 	    
 	  
 	    
@@ -125,10 +110,6 @@
 	    
 	      
 	    
-	      
-	    
-	      
-	    
       
       <!-- Nav links -->
 	    <a href="https://github.com/maciejmalecki">Github</a>
@@ -152,6 +133,14 @@
 <ul id="posts">
 
 	
+
+	  <li class="post">
+	  	<h2><a href="/blog/power-supply-for-bare-esp8266">Power supply for bare ESP 8266 units</a></h2>
+      <time datetime="2020-11-19T00:00:00+00:00" class="by-line"> <i>19 Nov 2020</i> </time>
+	  	<p>For battery powered ESP 8266 projects we would like to have a full control over electrical components that we use on board. This is because everything that draws power will also drain our battery, and this is something we want to avoid. The Wemos D1 Mini module seems to have...</p>
+	  </li>
+
+    
 
 	  <li class="post">
 	  	<h2><a href="/blog/gradle-retro-plugin">Gradle Retro Assembler plugin is released</a></h2>

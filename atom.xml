@@ -4,12 +4,22 @@
  <title>()=>{} | Void's blog</title>
  <link href="https://maciejmalecki.github.io/atom.xml" rel="self"/>
  <id>https://maciejmalecki.github.io</id>
- <updated>2020-11-18T22:39:04+00:00</updated>
+ <updated>2020-11-19T22:59:18+00:00</updated>
  <author>
    <name></name>
    <uri></uri>
    <email></email>
  </author>
+
+ 
+
+ <entry>
+   <title>Power supply for bare ESP 8266 units</title>
+   <link href="https://maciejmalecki.github.io/power-supply-for-bare-esp8266"/>
+   <id>https://maciejmalecki.github.io/power-supply-for-bare-esp8266</id>
+   <updated>2020-11-19T00:00:00+00:00</updated>
+   <content type="html">&lt;p&gt;For &lt;a href=&quot;esp8266-weather-station-1&quot;&gt;battery powered ESP 8266 projects&lt;/a&gt; we would like to have a full control over electrical components that we use on board. This is because everything that draws power will also drain our battery, and this is something we want to avoid. The Wemos D1 Mini module seems to...</content>
+ </entry>
 
  
 
