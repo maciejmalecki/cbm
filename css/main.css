@@ -142,13 +142,15 @@ blockquote p, blockquote ul, blockquote ol { padding: 1.5em 0; /* 24px/18px */ }
 /* Posts */
 #posts li { list-style-type: none; }
 
+#posts li a { color: #333333; text-decoration: none; font-weight: normal; }
+
+#posts li a:hover, #posts li a:focus { color: #333333; background-color: #8c8c8c; }
+
 #posts li div.short { flex-direction: row; display: flex; }
 
-#posts li div.short img { margin: 0 1em 0 0; height: 10em; }
+@media screen and (max-width: 600px) { #posts li div.short { flex-direction: column; } }
 
-#posts li div.short a { color: #333333; text-decoration: none; font-weight: normal; }
-
-#posts li div.short a:hover, #posts li div.short a:focus { color: #333333; }
+@media screen and (min-width: 601px) { #posts li div.short img { margin: 0 1em 0 0; height: 10em; } }
 
 #post-page { margin-bottom: 1.5em; }
 
